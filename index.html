@@ -1225,14 +1225,16 @@
             e.touches[0].clientY - e.touches[1].clientY
           );
         }
-      }, { passive: true });
+      }, { passive: false });
 
       container.addEventListener('touchmove', (e) => {
         if (e.touches.length === 1 && isMapPanning) {
+          if (e.cancelable) e.preventDefault();
           mapPanX = e.touches[0].clientX - mapPanStartX;
           mapPanY = e.touches[0].clientY - mapPanStartY;
           applyMapTransform();
         } else if (e.touches.length === 2 && touchStartDist > 0) {
+          if (e.cancelable) e.preventDefault();
           const currentDist = Math.hypot(
             e.touches[0].clientX - e.touches[1].clientX,
             e.touches[0].clientY - e.touches[1].clientY
@@ -1242,7 +1244,7 @@
           touchStartDist = currentDist;
           applyMapTransform();
         }
-      }, { passive: true });
+      }, { passive: false });
 
       container.addEventListener('touchend', () => {
         isMapPanning = false;
@@ -1332,7 +1334,6 @@
         g.setAttribute("id", `map-node-${node.id}`);
         g.setAttribute("class", "cursor-pointer group pointer-events-auto");
         
-        // 클릭 및 터치 이벤트: 이전 버전과 동일하게 지도의 HUD 텔레메트리 팝업만 즉시 표시
         const handleNodeClick = (e) => {
           e.stopPropagation();
           selectVirtualMapNode(node.id);
@@ -1407,7 +1408,6 @@
         g.setAttribute("id", `veh-marker-${veh.id}`);
         g.setAttribute("class", "cursor-pointer pointer-events-auto");
 
-        // 클릭 및 터치 이벤트: 클릭 시 HUD 텔레메트리 팝업만 즉시 표시
         const handleVehClick = (e) => {
           e.stopPropagation();
           selectVehicleOnMap(veh.id);
